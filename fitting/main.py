@@ -86,23 +86,7 @@ print('optimization done')
 # print(np.array(bezier_points_recorder).shape)
 optimized_num = len(bezier_points_recorder)
 
-sliders_dict = {
-    "active": 0,
-    "yanchor": "top",
-    "xanchor": "left",
-    "currentvalue": {
-        "font": {"size": 20},
-        "prefix": "Year:",
-        "visible": True,
-        "xanchor": "right"
-    },
-    "transition": {"duration": 300, "easing": "cubic-in-out"},
-    "pad": {"b": 10, "t": 50},
-    "len": 0.9,
-    "x": 0.1,
-    "y": 0,
-    "steps": []
-}
+
 # Create figure
 fig = go.Figure(
     data=[go.Scatter(x=control_points[:, 0], y=control_points[:, 1],
@@ -135,6 +119,26 @@ fig = go.Figure(
                            line=dict(width=line_width, color='#AB63FA'))])
                 for i in range(optimized_num)]
     )
-fig["layout"]["sliders"] = [sliders_dict]
+steps = []
+for i in range(optimized_num):
+    step = dict(
+        method="restyle",
+        args=["visible", [False] * optimized_num],
+    )
+    step["args"][1][i] = True  # Toggle i'th trace to "visible"
+    steps.append(step)
+
+sliders_dict = {
+    "active": 0,
+    "currentvalue": {
+        "prefix": "Year:",
+    },
+    "pad": {"t": 50},
+    "steps": []
+}
+fig.update_layout(
+    sliders=[sliders_dict],
+    transition = {'duration':1000000}
+)
 fig.show()
 plt.ioff()
